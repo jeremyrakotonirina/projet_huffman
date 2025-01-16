@@ -1,7 +1,6 @@
-let main () = Huffman.decompress "fichier"
+(*let main () = Huffman.decompress "fichier"*)
 
 
-let () = main ()
 
 let main()=
   let nomfichier = Sys.argv.(1) in
@@ -14,3 +13,5 @@ let main()=
     ) frequences
   with Sys_error msg ->
     Printf.printf "Erreur"
+
+let()=main()

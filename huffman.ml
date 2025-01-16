@@ -1,6 +1,10 @@
 (*let decompress _ = failwith "todo" *)
 (*let compress _ = failwith "todo"*)
 
+type tree =
+  | Leaf of int
+  | Node of tree * tree
+  
 let char_freq(channel:in_channel):int array=
   let freq = Array.make 256 0 in
   try 
@@ -10,3 +14,7 @@ let char_freq(channel:in_channel):int array=
     done;
     freq
   with End_of_file -> freq
+
+
+  
+  
