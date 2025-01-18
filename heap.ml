@@ -44,24 +44,21 @@ let find_min heap =
     if heap.taille = 0 then failwith "Le tas est vide";
     heap.data.(0)
 
+let indice_petit heap i j=
+    if j < heap.taille && heap.data.(j) < heap.data.(i) then j else i
+
 let remove_min heap = (*algorithme suppression élément tas binaire*)
     if heap.taille = 0 then failwith "Le tas est vide";
-    let min_elem = heap.data.(0) in
     heap.taille <- heap.taille - 1;
-    heap.data.(0) <- heap.data.(heap.taille);
+    heap.data.(0) <- heap.data.(heap.taille); (*car dernier élément du tablea à taille-1*)
     let rec descendre i =
-        let l = enfant_gauche i in
-        let r = enfant_droite i in
-        let smallest =
-            if l < heap.taille && heap.data.(l) < heap.data.(i) then l else i
-        in
-        let smallest =
-            if r < heap.taille && heap.data.(r) < heap.data.(smallest) then r else smallest
-        in
-        if smallest != i then begin
-            echange heap.data i smallest;
-            descendre smallest
+        let a = enfant_gauche i in
+        let b = enfant_droite i in
+        let petit = indice_petit heap i a in
+        let petit = indice_petit heap petit b in
+        if petit != i then begin
+            echange heap.data i petit;
+            descendre petit
         end
     in
     descendre 0;
-    min_elem
