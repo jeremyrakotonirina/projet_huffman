@@ -1,15 +1,18 @@
+type tree =
+  | Leaf of int
+  | Node of tree * tree
 
-type element = int * char
+type element = int * tree (*frequence * code de la lettre*)
 
-type t = {
+type t = {  
   data : element array;  (* Tableau contenant des couples (freq, char) *)
-  mutable taille : int;    (* Taille actuelle du tas *)
+  mutable taille : int;    (* Taille actuelle du tas, mmutable permet de le modifier *)
 }
 
 let empty = {
-    data = Array.make 256 (0,'\000'); (*car 256 bites et on initialise avec le caractère nul*)
+    data = Array.make 256 (0,Leaf 0) ; (*car 256 bites et on initialise avec des feuilles à 0 *)
     taille = 0;
-}
+    }
 
 let parent i = (i - 1) / 2
 
@@ -34,9 +37,7 @@ let add elt heap  = (*algorithme ajout élément tas binaire*)
         end
     in
     remonter heap.taille;
-    heap.taille <- heap.taille + 1;
-    heap
-    
+    heap.taille <- heap.taille + 1
 
 let is_singleton heap =
     heap.taille==1
@@ -59,12 +60,33 @@ let remove_min heap = (*algorithme suppression élément tas binaire*)
     let rec descendre i =
         let a = enfant_gauche i in
         let b = enfant_droite i in
-        let petit = indice_petit heap i a in
-        let petit = indice_petit heap petit b in
+        let petit = (*cherche le minimum entre le parent et ses 2 enfants*)
+            match (a < heap.taille, b < heap.taille) with (*vérifie que les enfants sont bien dans la file*)
+            | (true, true) ->
+                if fst heap.data.(a) < fst heap.data.(b) then
+                    if fst heap.data.(a) < fst heap.data.(i) then a else i
+                else
+                    if fst heap.data.(b) < fst heap.data.(i) then b else i
+            | (true, false) ->
+                if fst heap.data.(a) < fst heap.data.(i) then a else i
+            | (false, true) ->
+                if fst heap.data.(b) < fst heap.data.(i) then b else i
+            | (false, false) -> i
+      in
         if petit != i then begin
             echange heap.data i petit;
             descendre petit
         end
     in
     descendre 0;
-    (min_elem, heap)
+    min_elem
+
+
+
+
+
+
+
+      
+
+    

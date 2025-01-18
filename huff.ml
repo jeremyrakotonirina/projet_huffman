@@ -1,7 +1,6 @@
 (*let main () = Huffman.decompress "fichier"*)
 
 
-
 let main()=
   let nomfichier = Sys.argv.(1) in
   try
