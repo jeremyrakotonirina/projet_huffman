@@ -10,7 +10,7 @@ type t = {
 }
 
 let empty = {
-    data = Array.make 256 (0,Leaf 0) ; (*car 256 bites et on initialise avec des feuilles à 0 *)
+    data = Array.make 127 (0,Leaf 0) ; (*car 127 bites et on initialise avec des feuilles à 0 *)
     taille = 0;
     }
 

@@ -3,7 +3,7 @@
 open Heap 
   
 let char_freq(channel:in_channel):int array=
-  let freq = Array.make 256 0 in
+  let freq = Array.make 256 0 in (*car byte maximum d'un caractère affichable est 126*)
   try 
     while true do
       let byte= input_byte channel in
@@ -24,6 +24,18 @@ let compression tabfreq=
       add (n1 + n2, Node (t1, t2)) tas
   done;
   snd (find_min tas)
+
+let rec codes tree prefix acc =
+  match tree with
+  | Leaf char_code ->
+    (char_code, prefix) :: acc
+  
+  | Node (gauche, droite) ->
+    codes gauche (prefix ^ "0") (codes droite (prefix ^ "1") acc) (*on accumule les deux appels récursifs vers la gauche et la droite*)
+
+
+
+
 
 
 
