@@ -14,6 +14,15 @@ let char_freq(channel:in_channel):int array=
     freq
   with End_of_file -> freq
 
+let rec affiche_arbre tree =
+  match tree with
+  | Leaf char_code ->
+      Printf.printf "Leaf: (%d)\n"  char_code
+  | Node (gauche, droite) ->
+      Printf.printf "Node:\n";
+      affiche_arbre gauche;
+      affiche_arbre droite
+      
 let compression tabfreq=
   let tas=empty in
   Array.iteri (fun lettre occ ->
@@ -59,7 +68,7 @@ let serialise tree nomfichier=
   close_out fichier
 
 
-let rec lire_arbre istream =
+let rec lire_arbre istream =(*lit chaque bit du fichier et construit la constructure et initialise les feuilles à -1*)
   let bit = read_bit istream in
   match bit with
   | 0 -> Leaf (-1) 
@@ -69,13 +78,15 @@ let rec lire_arbre istream =
       Node (gauche, droite)
   | _ -> raise Invalid_stream 
 
-let rec lire_feuilles tree istream =
+let rec lire_feuilles tree istream = (*lit les bits du fichier qui correspondent aux feuilles et renvoie l'arbre avec les bonnes feuilles*)
   match tree with
   | Leaf _ ->
       let char_code = read_byte istream in (*lit 8 bytes ie 1 octet*)
       Leaf char_code
   | Node (left, right) ->
-      Node (lire_feuilles left istream, lire_feuilles right istream)
+      let gauche=lire_feuilles left istream in
+      let droite=lire_feuilles right istream in
+      Node (gauche, droite)
 
 let deserialise filename =
   let fichier=open_in filename in
@@ -84,6 +95,7 @@ let deserialise filename =
   let tree_with_values = lire_feuilles tree istream in
   close_in fichier;
   tree_with_values
+
   
 
 
