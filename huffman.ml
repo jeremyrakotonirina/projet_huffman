@@ -22,7 +22,7 @@ let rec affiche_arbre tree =
       Printf.printf "Node:\n";
       affiche_arbre gauche;
       affiche_arbre droite
-      
+
 let compression tabfreq=
   let tas=empty in
   Array.iteri (fun lettre occ ->
@@ -62,8 +62,8 @@ let rec ecrire_feuilles tree ostream = (* écrire code des feuilles *)
 let serialise tree nomfichier= 
   let fichier=open_out nomfichier in
   let ostream = of_out_channel fichier in (*crée un ostream*)
-  ecrire_arbre tree ostream;       
-  ecrire_feuilles tree ostream; 
+  ecrire_arbre tree ostream;(*écrit la structure de l'arbre*)  
+  ecrire_feuilles tree ostream; (*écrit les feuilles*)
   finalize ostream;              
   close_out fichier
 
@@ -91,10 +91,10 @@ let rec lire_feuilles tree istream = (*lit les bits du fichier qui correspondent
 let deserialise filename =
   let fichier=open_in filename in
   let istream = of_in_channel fichier in (*crée un isteam*)
-  let tree = lire_arbre istream in
-  let tree_with_values = lire_feuilles tree istream in
+  let tree = lire_arbre istream in (*lit la structure de l'arbre*)
+  let res = lire_feuilles tree istream in (*lit les feuilles*)
   close_in fichier;
-  tree_with_values
+  res
 
   
 
