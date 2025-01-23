@@ -2,23 +2,13 @@
 
 open Huffman
 open Heap
-let example_tree =
-  Node (
-    Node (Leaf 97, Leaf 98), (* 'a', 'b' *)
-    Node (Leaf 99, Node (Leaf 100, Leaf 101)) (* 'c', 'd', 'e' *)
-  )
+
 
 (* Fonction pour afficher un arbre pour la vérification *)
-let rec print_tree tree =
-  match tree with
-  | Leaf char_code ->
-      Printf.printf "Leaf: %c (%d)\n" (char_of_int char_code) char_code
-  | Node (left, right) ->
-      Printf.printf "Node:\n";
-      print_tree left;
-      print_tree right
+
 
 let main()=
+  (*
   let nomfichier = Sys.argv.(1) in
   try
     let cin = open_in nomfichier in
@@ -29,6 +19,16 @@ let main()=
     ) frequences
   with Sys_error msg ->
     Printf.printf "Erreur"
+    *)
+    let fichier_texte = "test.txt" in
+    let fichier_compresse = "resultat.hf" in
+    let fichier_decompresse="decompresse.txt" in
+  
+    compresser fichier_texte fichier_compresse;
+
+  
+
+  decompresser fichier_compresse fichier_decompresse
     
     
   
