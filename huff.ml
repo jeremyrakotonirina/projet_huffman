@@ -1,16 +1,6 @@
 
 open Huffman
 open Heap
-open Unix
-
-
-let afficher_aide () = (*pour huff --help*)
-  Printf.printf "Options :\n";
-  Printf.printf "  --help            Affiche ce message d'aide\n";
-  Printf.printf "  fichier           Compresse le fichier donné en argument pour produire fichier.hf\n";
-  Printf.printf "  fichier.hf        Décompresse le fichier donné en argument pour produire fichier\n";
-  Printf.printf "  --stats fichier   Compresse le fichier mais affiche des statistiques sur ce dernier\n";
-  exit 0
 
 let verifier_existence fichier =
   if not (Sys.file_exists fichier) then (
@@ -28,8 +18,7 @@ let stats fichier= (*compresse le fichier et renvoie des statistiques sur la com
   verifier_existence fichier;
   let fichier_compresse = fichier ^ ".hf" in
   compresser fichier fichier_compresse;
-
-  (* Calcul des statistiques *)
+  
   let taille_originale = taille_fichier fichier in (*trouve la taille en octets*)
   let taille_compressee = taille_fichier fichier_compresse in
   let taux_compression = 100.0 *. (1.0 -. (float_of_int taille_compressee /. float_of_int taille_originale)) in
@@ -41,22 +30,30 @@ let stats fichier= (*compresse le fichier et renvoie des statistiques sur la com
   exit 0
 
 
-
-
 let main()=
+  (*code d'erreur: 1 si option non renconnue;
+                   2 si erreur au niveau de nombre d'argument;
+                   3 si fichier inexistant*)
+
   match Array.length Sys.argv with
   | 1 -> (* Aucun argument fourni *)
-      Printf.printf "Erreur : aucun argument fourni.\n";
-      afficher_aide ();
+      Printf.printf "Erreur : aucun argument .\n";
       exit 2
 
   | 2 -> (*1 argument*)
     let arg = Sys.argv.(1) in
-    if arg = "--help" then (*on affiche l'aide*)
-      afficher_aide ()
+    if arg = "--help" then  (*on affiche l'aide*)
+      begin
+      Printf.printf "Options :\n";
+      Printf.printf "  --help            Affiche ce message d'aide\n";
+      Printf.printf "  fichier           Compresse le fichier donné en argument pour produire fichier.hf\n";
+      Printf.printf "  fichier.hf        Décompresse le fichier donné en argument pour produire fichier\n";
+      Printf.printf "  --stats fichier   Compresse le fichier mais affiche des statistiques sur ce dernier\n";
+      exit 0
+      end
     else if Filename.check_suffix arg ".hf" then ( (*si l'extension est .hf on décompresse*)
       verifier_existence arg;
-      let fichierecrire="2" ^ Filename.chop_suffix arg ".hf" in (*enlève l'extension .hf du fichier*)
+      let fichierecrire="2" ^ Filename.chop_suffix arg ".hf" in (*enlève l'extension .hf du fichier et rajoute un 2 au début pour le distinguer du fichier d'origine*)
       Printf.printf "Décompression du fichier %s dans %s\n" arg fichierecrire;
       decompresser arg fichierecrire;
       exit 0
@@ -75,12 +72,10 @@ let main()=
       stats fichier
     ) else (
       Printf.printf "Erreur : option non reconnue \n";
-      afficher_aide ();
       exit 1
     )
   | _ -> (* Trop d'arguments *)
     Printf.printf "Erreur : trop d'arguments.\n";
-    afficher_aide ();
     exit 2
 
     

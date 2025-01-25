@@ -3,12 +3,11 @@ open Heap
 open Bs
   
 let char_freq(channel:in_channel):int array=
-  let freq = Array.make 256 0 in (*car byte maximum d'un caractère affichable est 126*)
+  let freq = Array.make 256 0 in (*car 256 bytes*)
   try 
     while true do
       let byte= input_byte channel in
-      if byte >= 33 && byte <= 126 then  (* avoir que les caractères affichables et pas les sauts de ligne *)
-        freq.(byte) <- freq.(byte) + 1
+      freq.(byte) <- freq.(byte) + 1
     done;
     freq
   with End_of_file -> freq
@@ -67,6 +66,7 @@ let compresser fichierlire fichierecrire=
   close_in is; (*on le ferme pour pouvoir recommencer du début à la ligne 82*)
 
   let arbre_huffman=arbrehuffman tabfreq in (*crée l'arbre de huffman*)
+  (*affiche_arbre arbre_huffman; *) 
 
   let tableau_codes= codes arbre_huffman in (*met les codes des caractères dans une liste de tuples*)
 
@@ -80,11 +80,9 @@ let compresser fichierlire fichierecrire=
   try
     while true do (*boucle jusqu'à ce qu'on arrive à la fin, i.e on finit de lire tous els caractères*)
       let byte = input_byte is in (* Lit un caractère, read_byte de bs.mli ne marchait pas bien*)
-      if (byte >= 33 && byte <= 126) then( (*si c'est un caractère affichable, car on ne stocke que ceux là*)
-        let code = List.assoc byte tableau_codes in
-        String.iter (fun bit -> if bit == '0' then write_bit ostream 0 else write_bit ostream 1) 
-        code (*parcourt la chaine de caractère code et écrit les bits dans le fichierecrire*)
-      )
+      let code = List.assoc byte tableau_codes in
+      String.iter (fun bit -> if bit == '0' then write_bit ostream 0 else write_bit ostream 1) 
+      code (*parcourt la chaine de caractère code et écrit les bits dans le fichierecrire*)
     done
   with End_of_file -> 
     finalize ostream;
