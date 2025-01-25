@@ -62,14 +62,14 @@ let remove_min heap = (*algorithme suppression élément tas binaire*)
         let b = enfant_droite i in
         let petit = (*cherche le minimum entre le parent et ses 2 enfants*)
             match (a < heap.taille, b < heap.taille) with (*vérifie que les enfants sont bien dans la file*)
-            | (true, true) ->
+            | (true, true) -> (*les deux sont valables*)
                 if fst heap.data.(a) < fst heap.data.(b) then
                     if fst heap.data.(a) < fst heap.data.(i) then a else i
                 else
                     if fst heap.data.(b) < fst heap.data.(i) then b else i
-            | (true, false) ->
+            | (true, false) -> (*on ne compare que a*)
                 if fst heap.data.(a) < fst heap.data.(i) then a else i
-            | (false, true) ->
+            | (false, true) -> (*on ne compare que b*)
                 if fst heap.data.(b) < fst heap.data.(i) then b else i
             | (false, false) -> i
       in

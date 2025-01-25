@@ -1,5 +1,4 @@
-(*let decompress _ = failwith "todo" *)
-(*let compress _ = failwith "todo"*)
+
 open Heap 
 open Bs
   
@@ -62,14 +61,6 @@ let rec ecrire_feuilles tree ostream = (* écrire code des feuilles *)
       ecrire_feuilles gauche ostream;
       ecrire_feuilles droite ostream
 
-let serialise tree nomfichier= (*écrit la structure de l'arbre et le code des feuilles dans nomfichier*)
-  let fichier=open_out nomfichier in
-  let ostream = of_out_channel fichier in (*crée un ostream*)
-  ecrire_arbre tree ostream;(*écrit la structure de l'arbre*)  
-  ecrire_feuilles tree ostream; (*écrit les feuilles*)
-  finalize ostream;              
-  close_out fichier
-
 let compresser fichierlire fichierecrire=
   let is = open_in fichierlire in
   let tabfreq = char_freq is in (*tableau de fréquences du fichier*)
@@ -119,7 +110,6 @@ let rec lire_feuilles tree istream = (*lit les bits du fichier qui correspondent
       let gauche=lire_feuilles left istream in
       let droite=lire_feuilles right istream in
       Node (gauche, droite)
-
 
 
 let rec lire_char istream arbre_huffman = (*retourne un caractère du istream*)
