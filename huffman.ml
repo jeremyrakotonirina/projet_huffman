@@ -131,17 +131,14 @@ let rec lire_char istream arbre_huffman = (*retourne un caractère du istream*)
       char_code
   | Node (gauche, droite) ->
       (* Lire le prochain bit pour décider de la direction *)
-      let bit =
-        try read_bit istream
-        with End_of_stream -> raise End_of_file
-      in
+      let bit = read_bit istream in (*lève l'exception End_of_stream quand on arrive à la fin*)
       if bit = 0 then lire_char  istream gauche
       else lire_char  istream droite
 
 let lire_code istream arbre_huffman= (*fonction auxiliaire pour gérer l'exception et rendre la récursivité terminale dans decompresser*)
   try 
     lire_char istream arbre_huffman
-  with End_of_file -> -1
+  with End_of_stream -> -1
 
 
 let decompresser fichierlire fichierecrire =
