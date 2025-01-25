@@ -33,7 +33,7 @@ let arbrehuffman tabfreq= (*renvoie un arbre de huffman en suivant l'algorithme 
   done;
   snd (find_min tas)
 
-let rec codes tree=(*rend une liste de tuple des caractères et leur code compressé*)
+let rec codes tree=(*rend une liste de 2-tuple des caractères et leur code compressé*)
   let rec codes2 tree prefix acc=
     match tree with
     | Leaf char_code ->
@@ -68,7 +68,7 @@ let compresser fichierlire fichierecrire=
   let arbre_huffman=arbrehuffman tabfreq in (*crée l'arbre de huffman*)
   (*affiche_arbre arbre_huffman; *) 
 
-  let tableau_codes= codes arbre_huffman in (*met les codes des caractères dans une liste de tuples*)
+  let tableau_codes= codes arbre_huffman in (*met les codes des caractères dans une liste de 2-tuples*)
 
   let is = open_in fichierlire in (*ouvrir les fichiers*)
   let os = open_out fichierecrire in
