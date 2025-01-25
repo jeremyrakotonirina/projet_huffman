@@ -1,16 +1,23 @@
 
 open Heap 
 open Bs
+
+let input_code cin = (*une fonction auxiliaire qui gère directement l’exception  et rendre la récursivité terminale dans char_freq*)
+   try
+    input_byte cin
+   with End_of_file -> -1
   
 let char_freq(channel:in_channel):int array=
   let freq = Array.make 256 0 in (*car 256 bytes*)
-  try 
-    while true do
-      let byte= input_byte channel in
-      freq.(byte) <- freq.(byte) + 1
-    done;
-    freq
-  with End_of_file -> freq
+  let rec loop () =
+      let byte = input_code channel in (*utilise la fonction auxiliaire ci-dessus*)
+      if byte<0 then freq
+      else begin
+        freq.(byte) <- freq.(byte) + 1;
+        loop ()
+      end
+  in
+  loop ()
 
 let rec affiche_arbre tree = (*affiche l'arbre (pour les tests)*)
   match tree with
@@ -26,12 +33,15 @@ let arbrehuffman tabfreq= (*renvoie un arbre de huffman en suivant l'algorithme 
   Array.iteri (fun lettre occ ->
       if occ > 0 then add (occ, Leaf lettre) tas 
     ) tabfreq;
-  while not (is_singleton tas) do
+  let rec loop () =
+    if is_singleton tas then snd (find_min tas) (*renvoie quand il n'y a plus qu'un seul élément*)
+    else
       let (n1, t1) = remove_min tas in
       let (n2, t2) = remove_min tas in
-      add (n1 + n2, Node (t1, t2)) tas
-  done;
-  snd (find_min tas)
+      add (n1 + n2, Node (t1, t2)) tas; (*combine les deux noeuds avec le moins de fréquences*)
+      loop ()
+  in
+  loop ()
 
 let rec codes tree=(*rend une liste de 2-tuple des caractères et leur code compressé*)
   let rec codes2 tree prefix acc=
@@ -77,17 +87,21 @@ let compresser fichierlire fichierecrire=
   ecrire_arbre arbre_huffman ostream; (*serialisation*)
   ecrire_feuilles arbre_huffman ostream;
 
-  try
-    while true do (*boucle jusqu'à ce qu'on arrive à la fin, i.e on finit de lire tous els caractères*)
-      let byte = input_byte is in (* Lit un caractère, read_byte de bs.mli ne marchait pas bien*)
-      let code = List.assoc byte tableau_codes in
-      String.iter (fun bit -> if bit == '0' then write_bit ostream 0 else write_bit ostream 1) 
-      code (*parcourt la chaine de caractère code et écrit les bits dans le fichierecrire*)
-    done
-  with End_of_file -> 
-    finalize ostream;
-    close_out os;
-    close_in is
+  let rec loop () = (*boucle jusqu'à ce qu'on arrive à la fin, i.e on finit de lire tous els caractères*)
+    let byte=input_code is in (* Lit un caractère*)
+    if (byte < 0) then begin (*c'est à -1 si l'excpetion End_of_file est levée*)
+        finalize ostream;
+        close_out os;
+        close_in is
+    end
+    else(
+        let code = List.assoc byte tableau_codes in (*trouve le code compressé de byte*)
+        String.iter (fun bit ->  (*parcourt la chaine de caractère code et écrit les bits dans le fichierecrire*)
+          if bit = '0' then write_bit ostream 0 else write_bit ostream 1
+        ) code;
+        loop ())
+  in
+  loop ()
 
 let rec lire_arbre istream =(*lit chaque bit du fichier et construit la constructure et initialise les feuilles à -1*)
   let bit = read_bit istream in
@@ -124,6 +138,12 @@ let rec lire_char istream arbre_huffman = (*retourne un caractère du istream*)
       if bit = 0 then lire_char  istream gauche
       else lire_char  istream droite
 
+let lire_code istream arbre_huffman= (*fonction auxiliaire pour gérer l'exception et rendre la récursivité terminale dans decompresser*)
+  try 
+    lire_char istream arbre_huffman
+  with End_of_file -> -1
+
+
 let decompresser fichierlire fichierecrire =
   let is = open_in fichierlire in
   let istream = of_in_channel is in 
@@ -133,14 +153,17 @@ let decompresser fichierlire fichierecrire =
 
   let os = open_out fichierecrire in
 
-  try (*boucle jusqu'à ce que on arrive à la fin du texte*)
-    while true do
-      let char_code = lire_char istream arbre_huffman in (*lit le caracètre d'un code*)
+  let rec loop () = (*boucle jusqu'à ce que on arrive à la fin du texte*)
+      let char_code = lire_code istream arbre_huffman in (*lit le caracètre d'un code avec la fonction auxiliaire*)
+      if (char_code < 0) then begin (*c'est à -1 si on atteint la fin du fichier*)
+        close_out os;
+        close_in is
+      end
+      else(
       output_char os (char_of_int char_code); (*écrit dans fichierecrire la conversion du code ASCII en lettre*)
-    done
-  with End_of_file -> (*fin de la boucle*)
-    close_out os;
-    close_in is
+      loop ())
+  in
+  loop ()
 
   
 
