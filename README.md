@@ -114,3 +114,69 @@ Le programme compresse le fichier et calcule :
 
 
 **Exemple d'affichage :**
+ Statistiques de compression :
+Taille originale : 1234 octets
+Taille compressée : 456 octets
+Taux de compression : 63.06%
+
+---
+
+
+## **Codes d’erreur**
+
+
+Le programme retourne différents codes d’erreur (via `exit`) :
+
+
+• **1** : Option non reconnue.
+• **2** : Erreur sur le nombre d’arguments (trop ou pas assez).
+• **3** : Fichier inexistant.
+
+# **Tests**
+
+
+Deux fichiers d’exemple sont fournis :
+• **test1.txt**
+• **test2.txt**
+
+
+
+
+
+---
+
+
+## **Exemple de scénario de test**
+
+
+### **1. Compression**
+
+
+`huff.exe test1.txt`
+
+
+---
+
+
+### **2. Décompression**
+
+
+`huff.exe test1.txt.hf`
+
+
+---
+
+
+### **3. Comparaison**
+
+
+Vérifier que **test1.txt** et **2test1.txt** ont le même contenu (visuellement ou avec un outil de diff).
+
+
+---
+
+
+### **4. Statistiques**
+
+
+`huff.exe --stats test1.txt`
