@@ -61,7 +61,9 @@ Le programme se lance en ligne de commande avec différentes options.
 
 Affiche :
 • La liste des **options**.
+
 • Le **rôle** de chaque option.
+
 • Le comportement sur les fichiers **.hf** ou non **.hf**.
 
 
@@ -75,7 +77,9 @@ Affiche :
 
 
 • Vérifie que `mon_fichier.txt` **existe**.
+
 • Produit un fichier compressé `mon_fichier.txt.hf`.
+
 • Affiche un message du type :
 `Compression du fichier mon_fichier.txt dans mon_fichier.txt.hf`
 
@@ -90,7 +94,9 @@ Affiche :
 
 
 • Vérifie que `mon_fichier.txt.hf` **existe**.
+
 • Produit un fichier décompressé nommé `2mon_fichier.txt` (le préfixe **2** est ajouté pour le distinguer du fichier original).
+
 • Affiche un message du type :
 `Décompression du fichier mon_fichier.txt.hf dans 2mon_fichier.txt`
 
@@ -109,7 +115,9 @@ Affiche :
 
 Le programme compresse le fichier et calcule :
 • La **taille originale** (en octets).
+
 • La **taille compressée** (en octets).
+
 • Le **taux de compression** en pourcentage.
 
 
@@ -180,3 +188,4 @@ Vérifier que **test1.txt** et **2test1.txt** ont le même contenu (visuellement
 
 
 `huff.exe --stats test1.txt`
+
